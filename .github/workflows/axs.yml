@@ -1,85 +1,12 @@
 name: AXS Ticket Alert
 
 on:
-
-  schedule:
-
-    - cron: "*/10 * * * *"
-
   workflow_dispatch:
 
 jobs:
-
-  check:
-
+  test:
     runs-on: ubuntu-latest
 
     steps:
-
-      - name: Checkout repo
-
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-
-        uses: actions/setup-python@v5
-
-        with:
-
-          python-version: "3.11"
-
-      - name: Install dependencies
-
-        run: |
-
-          pip install requests playwright
-
-          playwright install chromium
-
-      - name: Run check
-
-        run: |
-
-          python - <<EOF
-
-import requests
-
-from playwright.sync_api import sync_playwright
-
-URL = "https://www.axs.com/events/1141607/ariana-grande-extra-date-added-tickets"
-
-BOT_TOKEN = "${{ secrets.BOT_TOKEN }}"
-
-CHAT_ID = "8933540965"
-
-def send(msg):
-
-    requests.post(
-
-        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-
-        data={"chat_id": CHAT_ID, "text": msg}
-
-    )
-
-with sync_playwright() as p:
-
-    browser = p.chromium.launch(headless=True)
-
-    page = browser.new_page()
-
-    page.goto(URL, wait_until="networkidle")
-
-    content = page.content().lower()
-
-    if "choose from the map" in content or "pick your tickets" in content or "find tickets" in content:
-
-        send("🚨 TICKETS MOGELIJK BESCHIKBAAR! CHECK NU: " + URL)
-
-    else:
-
-        print("no tickets")
-
-    browser.close()
-
-EOF
+      - name: Run simple test
+        run: echo "Workflow werkt"
