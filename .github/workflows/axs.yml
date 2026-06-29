@@ -1,10 +1,12 @@
-name: AXS Test
+name: AXS Ticket Alert
 
 on:
+  schedule:
+    - cron: "*/10 * * * *"
   workflow_dispatch:
 
 jobs:
-  test:
+  check:
     runs-on: ubuntu-latest
 
     steps:
@@ -13,6 +15,33 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Test script
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run check
         run: |
-          python -c "print('Python werkt in GitHub Actions')"
+          python - <<EOF
+import requests
+
+URL = "https://www.axs.com/events/1141607/ariana-grande-extra-date-added-tickets"
+
+BOT_TOKEN = "${{ secrets.BOT_TOKEN }}"
+CHAT_ID = "8933540965"
+
+def send(msg):
+    if BOT_TOKEN != "":
+        requests.post(
+            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+            data={"chat_id": CHAT_ID, "text": msg}
+        )
+
+# simpele check zonder browser (stabieler)
+r = requests.get(URL)
+text = r.text.lower()
+
+if "choose from the map" in text or "pick your tickets" in text or "find tickets" in text:
+    send("🚨 AXS TICKETS MOGELIJK BESCHIKBAAR: " + URL)
+    print("ALERT")
+else:
+    print("no tickets")
+EOF
