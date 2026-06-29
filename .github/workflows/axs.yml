@@ -1,4 +1,4 @@
-name: AXS Ticket Alert
+name: AXS Test
 
 on:
   workflow_dispatch:
@@ -8,5 +8,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Run simple test
-        run: echo "Workflow werkt"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Test script
+        run: |
+          python -c "print('Python werkt in GitHub Actions')"
