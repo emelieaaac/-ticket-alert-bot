@@ -10,8 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -21,17 +20,5 @@ jobs:
       - name: Install requests
         run: pip install requests
 
-      - name: Run check
-        run: |
-          python -c "
-import requests
-
-url = 'https://www.axs.com/events/1141607/ariana-grande-extra-date-added-tickets'
-r = requests.get(url)
-text = r.text.lower()
-
-if 'choose from the map' in text or 'find tickets' in text:
-    print('TICKETS POSSIBEL')
-else:
-    print('no tickets')
-"
+      - name: Run script
+        run: python check.py
